@@ -47,6 +47,22 @@ module.exports = {
 
     return sanitizeEntity(entity, { model: strapi.models.events });
   },
+  // Delete a user event
+  async delete(ctx) {
+    const { id } = ctx.params;
+
+    const [events] = await strapi.services.events.find({
+      id: ctx.params.id,
+      "user.id": ctx.state.user.id,
+    });
+
+    if (!events) {
+      return ctx.unauthorized(`You can't update this entry`);
+    }
+
+    const entity = await strapi.services.events.delete({ id });
+    return sanitizeEntity(entity, { model: strapi.models.events });
+  },
   // Get logged in users
   async me(ctx) {
     const user = ctx.state.user;
