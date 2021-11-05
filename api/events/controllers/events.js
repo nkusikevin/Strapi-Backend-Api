@@ -21,6 +21,32 @@ module.exports = {
     }
     return sanitizeEntity(entity, { model: strapi.models.events });
   },
+  // Update user event
+  async update(ctx) {
+    const { id } = ctx.params;
+
+    let entity;
+
+    const [events] = await strapi.services.events.find({
+      id: ctx.params.id,
+      "user.id": ctx.state.user.id,
+    });
+
+    if (!events) {
+      return ctx.unauthorized(`You can't update this entry`);
+    }
+
+    if (ctx.is("multipart")) {
+      const { data, files } = parseMultipartData(ctx);
+      entity = await strapi.services.events.update({ id }, data, {
+        files,
+      });
+    } else {
+      entity = await strapi.services.events.update({ id }, ctx.request.body);
+    }
+
+    return sanitizeEntity(entity, { model: strapi.models.events });
+  },
   // Get logged in users
   async me(ctx) {
     const user = ctx.state.user;
