@@ -63,6 +63,7 @@ module.exports = {
     const entity = await strapi.services.events.delete({ id });
     return sanitizeEntity(entity, { model: strapi.models.events });
   },
+  
   // Get logged in users
   async me(ctx) {
     const user = ctx.state.user;
